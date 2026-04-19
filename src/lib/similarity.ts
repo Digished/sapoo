@@ -16,8 +16,7 @@ export function computeMatches(
   currentUserId: string,
   currentUserTraits: string[],
   allResponses: RawResponse[],
-  allUsers: UserRecord[],
-  topN = 5
+  allUsers: UserRecord[]
 ): MatchResult[] {
   const byUser = new Map<string, Set<string>>()
   for (const r of allResponses) {
@@ -51,7 +50,6 @@ export function computeMatches(
 
   return results
     .sort((a, b) => b.similarity - a.similarity || b.sharedCount - a.sharedCount)
-    .slice(0, topN)
 }
 
 export function computeGlobalStats(
