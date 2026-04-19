@@ -224,11 +224,11 @@ function SetupContent() {
           </div>
         </div>
 
-        {/* PIN field */}
-        {(mode === 'returning' || name.trim().length >= 2) && (
+        {/* PIN field — only for returning users */}
+        {mode === 'returning' && (
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-gray-700" htmlFor="pin">
-              {mode === 'returning' ? 'Enter your PIN' : 'Create a 4-digit PIN'}
+              Enter your PIN
             </label>
             <div className="relative">
               <input
@@ -236,12 +236,13 @@ function SetupContent() {
                 type={showPin ? 'text' : 'password'}
                 value={pin}
                 onChange={e => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                placeholder={mode === 'returning' ? '••••' : 'Choose a PIN'}
+                placeholder="••••"
                 required
                 minLength={4}
                 maxLength={4}
                 inputMode="numeric"
                 pattern="[0-9]{4}"
+                autoFocus
                 className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent text-base tracking-widest pr-12"
               />
               <button
@@ -252,9 +253,6 @@ function SetupContent() {
                 {showPin ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
-            {mode === 'new' && (
-              <p className="text-xs text-gray-400">You&apos;ll need this to sign back in</p>
-            )}
           </div>
         )}
 
@@ -265,7 +263,7 @@ function SetupContent() {
         <div className="pt-2">
           <button
             type="submit"
-            disabled={isSubmitting || !name.trim() || pin.length < 4}
+            disabled={isSubmitting || !name.trim() || (mode === 'returning' && pin.length < 4)}
             className={cn(
               'w-full font-semibold py-4 rounded-2xl transition-colors text-base shadow-md disabled:shadow-none',
               mode === 'returning'
