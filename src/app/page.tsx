@@ -1,49 +1,63 @@
 import Link from 'next/link'
-import { Hospital, CheckCircle2, Users, BarChart3, ArrowRight } from 'lucide-react'
+import { Stethoscope, CheckSquare, Users, BarChart3, ArrowRight } from 'lucide-react'
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center flex-1 px-6 py-12">
-      <div className="w-full max-w-sm space-y-8">
+    <div className="flex flex-col items-center justify-center flex-1 px-6 py-14">
+      <div className="w-full max-w-sm space-y-10">
 
-        <div className="text-center space-y-4">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-green-500 shadow-lg shadow-green-200">
-            <Hospital size={32} strokeWidth={1.8} className="text-white" />
+        {/* Hero */}
+        <div className="text-center space-y-5 animate-fade-up">
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-green-500 shadow-xl shadow-green-200 animate-float">
+            <Stethoscope size={38} strokeWidth={1.6} className="text-white" />
           </div>
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-gray-900 tracking-tight leading-tight">
-              Hospital Truth<br />Bingo
+            <p className="text-xs font-semibold tracking-widest text-green-500 uppercase">
+              Happy Doctors&apos; Day
+            </p>
+            <h1 className="text-4xl font-bold text-gray-900 tracking-tight leading-none">
+              Harvey Twin
             </h1>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              Doctors&apos; Day Edition — pick your traits<br />and find your hospital twin
+            <p className="text-gray-400 text-sm leading-relaxed max-w-xs mx-auto">
+              Pick your traits and find your hospital twin
             </p>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm divide-y divide-gray-50">
+        {/* Feature list */}
+        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden animate-fade-up-1">
           {[
-            { icon: CheckCircle2, text: 'Pick 10 traits that describe you' },
-            { icon: Users,         text: 'See which colleagues you match' },
-            { icon: BarChart3,     text: 'Explore fun hospital-wide stats' },
-          ].map(({ icon: Icon, text }) => (
-            <div key={text} className="flex items-center gap-3.5 px-5 py-3.5">
-              <div className="shrink-0 w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
-                <Icon size={16} strokeWidth={2} className="text-green-500" />
+            { icon: CheckSquare, text: 'Pick 7 traits that describe you' },
+            { icon: Users,       text: 'Find colleagues who match your vibe' },
+            { icon: BarChart3,   text: 'See fun hospital-wide stats' },
+          ].map(({ icon: Icon, text }, i) => (
+            <div
+              key={text}
+              className={`flex items-center gap-4 px-5 py-4 ${i > 0 ? 'border-t border-gray-50' : ''}`}
+            >
+              <div className="w-8 h-8 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+                <Icon size={15} strokeWidth={2.2} className="text-green-500" />
               </div>
-              <span className="text-sm text-gray-600">{text}</span>
+              <span className="text-sm text-gray-600 font-medium">{text}</span>
             </div>
           ))}
         </div>
 
-        <div className="space-y-3">
+        {/* CTAs */}
+        <div className="space-y-3 animate-fade-up-2">
           <Link
             href="/setup"
-            className="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-600 active:bg-green-700 text-white font-semibold py-4 rounded-2xl transition-colors shadow-md shadow-green-200"
+            className="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-600 active:bg-green-700 text-white font-semibold py-4 rounded-2xl transition-colors shadow-lg shadow-green-200 text-base"
           >
-            Let&apos;s Play
+            Get Started
             <ArrowRight size={18} strokeWidth={2.5} />
           </Link>
-          <p className="text-center text-xs text-gray-400">No login required · Takes 2 minutes</p>
+          <Link
+            href="/setup?mode=signin"
+            className="flex items-center justify-center w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 font-medium py-3.5 rounded-2xl transition-colors text-sm"
+          >
+            Already joined? Sign back in
+          </Link>
         </div>
 
       </div>

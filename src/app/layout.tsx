@@ -5,8 +5,8 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Hospital Truth Bingo',
-  description: "Doctors' Day — How relatable are you?",
+  title: 'Harvey Twin',
+  description: "Happy Doctors' Day — pick your traits and find your hospital twin",
 }
 
 export const viewport: Viewport = {

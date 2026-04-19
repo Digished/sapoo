@@ -4,6 +4,8 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { Pencil } from 'lucide-react'
 import { getSupabase } from '@/lib/supabase'
 import { TRAITS } from '@/lib/traits'
 import BingoGrid from '@/components/BingoGrid'
@@ -116,11 +118,18 @@ export default function BingoPage() {
     <div className="flex flex-col flex-1">
       <div className="px-4 pt-5 pb-3">
         <div className="flex items-start justify-between mb-3">
-          <div>
-            <h1 className="font-bold text-gray-900 text-lg leading-tight">
-              Hi, {userName || 'there'}! 👋
-            </h1>
-            <p className="text-xs text-gray-400 mt-0.5">Pick the traits that describe you</p>
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <h1 className="font-bold text-gray-900 text-lg leading-tight truncate">
+                  {userName || 'Your board'}
+                </h1>
+                <Link href="/profile" className="shrink-0 text-gray-300 hover:text-gray-500 transition-colors">
+                  <Pencil size={14} strokeWidth={2} />
+                </Link>
+              </div>
+              <p className="text-xs text-gray-400 mt-0.5">Pick the traits that describe you</p>
+            </div>
           </div>
           <div className="text-right">
             <div className={cn(

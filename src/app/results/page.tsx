@@ -115,14 +115,6 @@ export default function ResultsPage() {
           >
             <UserCheck size={15} strokeWidth={2} />
             Matches
-            {matches.length > 0 && (
-              <span className={cn(
-                'text-xs rounded-full px-1.5 py-0.5 tabular-nums',
-                tab === 'matches' ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-400'
-              )}>
-                {matches.length}
-              </span>
-            )}
           </button>
           <button
             onClick={() => setTab('stats')}
