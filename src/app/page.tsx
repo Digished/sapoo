@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Stethoscope, CheckSquare, Users, BarChart3, ArrowRight } from 'lucide-react'
+import { Stethoscope, CheckSquare, Users, ArrowRight } from 'lucide-react'
 
 export default function Home() {
   return (
@@ -29,7 +29,6 @@ export default function Home() {
           {[
             { icon: CheckSquare, text: 'Pick 7 traits that describe you' },
             { icon: Users,       text: 'Find colleagues who match your vibe' },
-            { icon: BarChart3,   text: 'See fun hospital-wide stats' },
           ].map(({ icon: Icon, text }, i) => (
             <div
               key={text}
