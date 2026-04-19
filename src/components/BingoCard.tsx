@@ -3,7 +3,7 @@
 import { Trait } from '@/types'
 import { cn } from '@/lib/utils'
 
-const MAX_SELECTIONS = 10
+const MAX_SELECTIONS = 7
 
 interface Props {
   trait: Trait

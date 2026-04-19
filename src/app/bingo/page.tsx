@@ -9,7 +9,7 @@ import { TRAITS } from '@/lib/traits'
 import BingoGrid from '@/components/BingoGrid'
 import { cn } from '@/lib/utils'
 
-const MAX = 10
+const MAX = 7
 
 export default function BingoPage() {
   const router = useRouter()
