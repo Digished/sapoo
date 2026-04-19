@@ -17,7 +17,7 @@ export const TRAITS: Trait[] = [
   { key: 'overthinks',         label: 'Overthinks everything',   icon: Brain },
   { key: 'last_minute',        label: 'Last-minute worker',      icon: AlarmClock },
   { key: 'very_punctual',      label: 'Very punctual',           icon: CheckCircle2 },
-  { key: 'always_late',        label: 'Always late 😅',          icon: Clock },
+  { key: 'always_late',        label: 'Always late',             icon: Clock },
   { key: 'introvert',          label: 'Introvert',               icon: Home },
   { key: 'extrovert',          label: 'Extrovert',               icon: Users },
   { key: 'talks_group_chat',   label: 'Talks a lot in chats',    icon: MessageCircle },

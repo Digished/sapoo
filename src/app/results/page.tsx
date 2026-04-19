@@ -178,11 +178,6 @@ export default function ResultsPage() {
               sub={`${stats.rarestCount} doctor${stats.rarestCount !== 1 ? 's' : ''}`}
             />
             <StatCard
-              icon={Trophy}
-              label="Most Relatable"
-              value={stats.mostRelatableDoctor}
-            />
-            <StatCard
               icon={Users}
               label="Total Participants"
               value={`${stats.totalDoctors} doctor${stats.totalDoctors !== 1 ? 's' : ''}`}
