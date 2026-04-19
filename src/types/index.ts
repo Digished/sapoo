@@ -1,6 +1,9 @@
+import { LucideIcon } from 'lucide-react'
+
 export interface Trait {
   key: string
   label: string
+  icon: LucideIcon
 }
 
 export interface User {

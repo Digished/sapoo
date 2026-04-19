@@ -6,24 +6,9 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getSupabase } from '@/lib/supabase'
 
-const DEPARTMENTS = [
-  'Emergency Medicine',
-  'Internal Medicine',
-  'Surgery',
-  'Pediatrics',
-  'ICU / Critical Care',
-  'Obstetrics & Gynecology',
-  'Psychiatry',
-  'Radiology',
-  'Anesthesiology',
-  'Orthopedics',
-  'Other',
-]
-
 export default function SetupPage() {
   const router = useRouter()
   const [name, setName] = useState('')
-  const [department, setDepartment] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -36,7 +21,7 @@ export default function SetupPage() {
 
     const { data, error: insertError } = await getSupabase()
       .from('users')
-      .insert({ name: name.trim(), department: department || null })
+      .insert({ name: name.trim(), department: null })
       .select('id')
       .single()
 
@@ -55,43 +40,27 @@ export default function SetupPage() {
   return (
     <div className="flex flex-col flex-1 px-6 py-10">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Who are you?</h1>
-        <p className="text-gray-500 text-sm mt-1">Just a name — no account needed</p>
+        <h1 className="text-2xl font-bold text-gray-900">What&apos;s your name?</h1>
+        <p className="text-gray-500 text-sm mt-1">No account needed — just your name</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4 flex-1">
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-gray-700" htmlFor="name">
-            Name <span className="text-red-400">*</span>
+            Name
           </label>
           <input
             id="name"
             type="text"
             value={name}
             onChange={e => setName(e.target.value)}
-            placeholder="Dr. Amina"
+            placeholder="e.g. Amina"
             required
             minLength={2}
             maxLength={60}
-            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent text-base"
+            autoFocus
+            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent text-base"
           />
-        </div>
-
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium text-gray-700" htmlFor="department">
-            Department <span className="text-gray-400 font-normal">(optional)</span>
-          </label>
-          <select
-            id="department"
-            value={department}
-            onChange={e => setDepartment(e.target.value)}
-            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent text-base appearance-none"
-          >
-            <option value="">Select department</option>
-            {DEPARTMENTS.map(d => (
-              <option key={d} value={d}>{d}</option>
-            ))}
-          </select>
         </div>
 
         {error && (
