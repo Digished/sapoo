@@ -162,17 +162,20 @@ export default function ResultsPage() {
               label="Most Common Trait"
               value={stats.mostCommonTrait}
               sub={`${stats.mostCommonCount} doctor${stats.mostCommonCount !== 1 ? 's' : ''}`}
+              color="violet"
             />
             <StatCard
               icon={Gem}
               label="Rarest Trait"
               value={stats.rarestTrait}
               sub={`${stats.rarestCount} doctor${stats.rarestCount !== 1 ? 's' : ''}`}
+              color="amber"
             />
             <StatCard
               icon={Users}
               label="Total Participants"
               value={`${stats.totalDoctors} doctor${stats.totalDoctors !== 1 ? 's' : ''}`}
+              color="sky"
             />
           </>
         )}

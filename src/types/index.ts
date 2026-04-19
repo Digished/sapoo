@@ -1,9 +1,12 @@
 import { LucideIcon } from 'lucide-react'
 
+export type TraitColor = 'green' | 'violet' | 'rose' | 'amber' | 'sky'
+
 export interface Trait {
   key: string
   label: string
   icon: LucideIcon
+  color: TraitColor
 }
 
 export interface User {
@@ -34,6 +37,5 @@ export interface GlobalStats {
   mostCommonCount: number
   rarestTrait: string
   rarestCount: number
-  mostRelatableDoctor: string
   totalDoctors: number
 }
