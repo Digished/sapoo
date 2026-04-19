@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  touch-action: manipulation;
+}
+
+body {
+  background: #f9fafb;
+}
