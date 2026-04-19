@@ -16,8 +16,7 @@ export function computeMatches(
   currentUserId: string,
   currentUserTraits: string[],
   allResponses: RawResponse[],
-  allUsers: UserRecord[],
-  topN = 5
+  allUsers: UserRecord[]
 ): MatchResult[] {
   const byUser = new Map<string, Set<string>>()
   for (const r of allResponses) {
@@ -51,12 +50,12 @@ export function computeMatches(
 
   return results
     .sort((a, b) => b.similarity - a.similarity || b.sharedCount - a.sharedCount)
-    .slice(0, topN)
 }
 
 export function computeGlobalStats(
   allResponses: RawResponse[],
-  allUsers: UserRecord[]
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _allUsers: UserRecord[]
 ): GlobalStats {
   const traitCounts = new Map<string, number>()
   for (const r of allResponses) {
@@ -67,19 +66,11 @@ export function computeGlobalStats(
   const mostCommon = sorted[0] ?? ['—', 0]
   const rarest = sorted[sorted.length - 1] ?? ['—', 0]
 
-  const responsesByUser = new Map<string, number>()
-  for (const r of allResponses) {
-    responsesByUser.set(r.user_id, (responsesByUser.get(r.user_id) ?? 0) + 1)
-  }
-  const mostRelatableId = Array.from(responsesByUser.entries()).sort((a, b) => b[1] - a[1])[0]?.[0]
-  const mostRelatable = allUsers.find(u => u.id === mostRelatableId)
-
   return {
     mostCommonTrait: TRAIT_MAP.get(mostCommon[0]) ?? mostCommon[0],
     mostCommonCount: mostCommon[1],
     rarestTrait: TRAIT_MAP.get(rarest[0]) ?? rarest[0],
     rarestCount: rarest[1],
-    mostRelatableDoctor: mostRelatable?.name ?? '—',
     totalDoctors: new Set(allResponses.map(r => r.user_id)).size,
   }
 }

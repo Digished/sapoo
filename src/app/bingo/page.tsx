@@ -4,9 +4,14 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { Pencil } from 'lucide-react'
 import { getSupabase } from '@/lib/supabase'
 import { TRAITS } from '@/lib/traits'
 import BingoGrid from '@/components/BingoGrid'
+import { cn } from '@/lib/utils'
+
+const MAX = 7
 
 export default function BingoPage() {
   const router = useRouter()
@@ -80,8 +85,11 @@ export default function BingoPage() {
   const handleToggle = useCallback(
     (key: string) => {
       setSelected(prev => {
+        const isRemoving = prev.has(key)
+        if (!isRemoving && prev.size >= MAX) return prev
+
         const next = new Set(prev)
-        if (next.has(key)) next.delete(key)
+        if (isRemoving) next.delete(key)
         else next.add(key)
 
         if (debounceRef.current) clearTimeout(debounceRef.current)
@@ -95,6 +103,9 @@ export default function BingoPage() {
     [userId, save]
   )
 
+  const count = selected.size
+  const atMax = count >= MAX
+
   if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -105,34 +116,63 @@ export default function BingoPage() {
 
   return (
     <div className="flex flex-col flex-1">
-      <div className="px-4 pt-6 pb-2 flex items-center justify-between">
-        <div>
-          <h1 className="font-bold text-gray-900 text-lg">
-            Hi, {userName || 'Doctor'}! 👋
-          </h1>
-          <p className="text-sm text-gray-500">Tap the traits that apply to you</p>
+      <div className="px-4 pt-5 pb-3">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <h1 className="font-bold text-gray-900 text-lg leading-tight truncate">
+                  {userName || 'Your board'}
+                </h1>
+                <Link href="/profile" className="shrink-0 text-gray-300 hover:text-gray-500 transition-colors">
+                  <Pencil size={14} strokeWidth={2} />
+                </Link>
+              </div>
+              <p className="text-xs text-gray-400 mt-0.5">Pick the traits that describe you</p>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className={cn(
+              'text-2xl font-bold tabular-nums leading-none',
+              atMax ? 'text-green-500' : 'text-gray-800'
+            )}>
+              {count}<span className="text-gray-300 text-base font-normal">/{MAX}</span>
+            </div>
+            <p className={cn(
+              'text-[10px] mt-0.5',
+              atMax ? 'text-green-500 font-medium' : 'text-gray-400'
+            )}>
+              {atMax ? 'Board full ✓' : isSaving ? 'Saving…' : 'selected'}
+            </p>
+          </div>
         </div>
-        <div className="text-right">
-          <span className="text-2xl font-bold text-green-500">{selected.size}</span>
-          <span className="text-gray-400 text-sm">/25</span>
-          {isSaving && <p className="text-xs text-gray-400">Saving…</p>}
+
+        <div className="w-full bg-gray-100 rounded-full h-1.5">
+          <div
+            className={cn(
+              'h-1.5 rounded-full transition-all duration-300',
+              atMax ? 'bg-green-500' : 'bg-green-400'
+            )}
+            style={{ width: `${(count / MAX) * 100}%` }}
+          />
         </div>
       </div>
 
       <BingoGrid traits={TRAITS} selected={selected} onToggle={handleToggle} />
 
-      <div className="px-4 pb-8 pt-3">
-        <button
-          onClick={() => router.push('/results')}
-          className="w-full bg-green-500 hover:bg-green-600 active:bg-green-700 text-white font-semibold py-4 rounded-2xl transition-colors text-lg shadow-md shadow-green-200"
-        >
-          See Results →
-        </button>
-        {selected.size === 0 && (
-          <p className="text-center text-xs text-gray-400 mt-2">
-            Select at least one trait first
+      <div className="px-4 pb-8 pt-4">
+        {atMax && (
+          <p className="text-center text-xs text-green-600 font-medium mb-3">
+            You picked {MAX} traits — ready to see your matches!
           </p>
         )}
+        <button
+          onClick={() => router.push('/results')}
+          disabled={count === 0}
+          className="w-full bg-green-500 hover:bg-green-600 active:bg-green-700 disabled:bg-gray-200 disabled:text-gray-400 text-white font-semibold py-4 rounded-2xl transition-colors text-base shadow-md shadow-green-200 disabled:shadow-none"
+        >
+          See My Matches →
+        </button>
       </div>
     </div>
   )

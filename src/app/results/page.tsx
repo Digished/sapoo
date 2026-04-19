@@ -5,14 +5,19 @@ export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { Search, TrendingUp, Gem, Trophy, Users, ArrowLeft, UserCheck, BarChart3 } from 'lucide-react'
 import { getSupabase } from '@/lib/supabase'
 import { computeMatches, computeGlobalStats } from '@/lib/similarity'
 import { MatchResult, GlobalStats } from '@/types'
 import DoctorMatch from '@/components/DoctorMatch'
 import StatCard from '@/components/StatCard'
+import { cn } from '@/lib/utils'
+
+type Tab = 'matches' | 'stats'
 
 export default function ResultsPage() {
   const router = useRouter()
+  const [tab, setTab] = useState<Tab>('matches')
   const [matches, setMatches] = useState<MatchResult[]>([])
   const [stats, setStats] = useState<GlobalStats | null>(null)
   const [userName, setUserName] = useState('')
@@ -46,11 +51,8 @@ export default function ResultsPage() {
         const allResponses = allResponsesRes.data ?? []
         const allUsers = allUsersRes.data ?? []
 
-        const topMatches = computeMatches(userId!, myTraits, allResponses, allUsers)
-        const globalStats = computeGlobalStats(allResponses, allUsers)
-
-        setMatches(topMatches)
-        setStats(globalStats)
+        setMatches(computeMatches(userId!, myTraits, allResponses, allUsers))
+        setStats(computeGlobalStats(allResponses, allUsers))
       } catch {
         setError('Could not load results. Please try again.')
       } finally {
@@ -64,9 +66,11 @@ export default function ResultsPage() {
   if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <div className="text-center space-y-2">
-          <div className="text-3xl animate-bounce">🔍</div>
-          <p className="text-gray-500 text-sm">Finding your matches…</p>
+        <div className="text-center space-y-3">
+          <div className="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center mx-auto">
+            <Search size={22} className="text-green-400 animate-pulse" />
+          </div>
+          <p className="text-gray-400 text-sm">Finding your matches…</p>
         </div>
       </div>
     )
@@ -77,10 +81,7 @@ export default function ResultsPage() {
       <div className="flex-1 flex items-center justify-center px-6">
         <div className="text-center space-y-4">
           <p className="text-red-500">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="text-green-600 font-medium"
-          >
+          <button onClick={() => window.location.reload()} className="text-green-600 font-medium">
             Try again
           </button>
         </div>
@@ -89,77 +90,105 @@ export default function ResultsPage() {
   }
 
   return (
-    <div className="flex flex-col flex-1 px-4 py-6 space-y-6">
-      <div>
+    <div className="flex flex-col flex-1">
+      {/* Header */}
+      <div className="px-4 pt-6 pb-4">
         <h1 className="text-2xl font-bold text-gray-900">
-          Your Results {userName ? `, ${userName}` : ''}! 🎉
+          {userName ? `${userName}'s Results` : 'Your Results'}
         </h1>
-        <p className="text-gray-500 text-sm mt-1">Based on your bingo board</p>
+        <p className="text-gray-400 text-sm mt-0.5">
+          {tab === 'matches' ? 'Tap a match to see your shared traits' : 'How the hospital scored'}
+        </p>
       </div>
 
-      <section className="space-y-3">
-        <h2 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">
-          Your Top Matches
-        </h2>
-        {matches.length === 0 ? (
-          <div className="bg-white rounded-2xl p-6 text-center border border-gray-100 shadow-sm">
-            <p className="text-gray-400 text-sm">
-              No matches yet — you might be the first one here! 🏆
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {matches.map((m, i) => (
-              <DoctorMatch key={m.userId} match={m} rank={i + 1} />
-            ))}
-          </div>
-        )}
-      </section>
-
-      {stats && (
-        <section className="space-y-3">
-          <h2 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">
+      {/* Tabs */}
+      <div className="px-4 mb-4">
+        <div className="flex bg-gray-100 rounded-2xl p-1 gap-1">
+          <button
+            onClick={() => setTab('matches')}
+            className={cn(
+              'flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all',
+              tab === 'matches'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-400 hover:text-gray-600'
+            )}
+          >
+            <UserCheck size={15} strokeWidth={2} />
+            Matches
+          </button>
+          <button
+            onClick={() => setTab('stats')}
+            className={cn(
+              'flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all',
+              tab === 'stats'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-400 hover:text-gray-600'
+            )}
+          >
+            <BarChart3 size={15} strokeWidth={2} />
             Hospital Stats
-          </h2>
-          <div className="space-y-2">
+          </button>
+        </div>
+      </div>
+
+      {/* Tab content */}
+      <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-2">
+        {tab === 'matches' && (
+          <>
+            {matches.length === 0 ? (
+              <div className="bg-white rounded-2xl p-8 text-center border border-gray-100 shadow-sm space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center mx-auto">
+                  <Trophy size={20} strokeWidth={2} className="text-green-400" />
+                </div>
+                <p className="text-gray-400 text-sm">No matches yet — you might be the first one here!</p>
+              </div>
+            ) : (
+              matches.map((m, i) => (
+                <DoctorMatch
+                  key={m.userId}
+                  match={m}
+                  rank={i + 1}
+                  href={`/results/match/${m.userId}`}
+                />
+              ))
+            )}
+          </>
+        )}
+
+        {tab === 'stats' && stats && (
+          <>
             <StatCard
-              emoji="🔥"
+              icon={TrendingUp}
               label="Most Common Trait"
               value={stats.mostCommonTrait}
               sub={`${stats.mostCommonCount} doctor${stats.mostCommonCount !== 1 ? 's' : ''}`}
+              color="violet"
             />
             <StatCard
-              emoji="💎"
+              icon={Gem}
               label="Rarest Trait"
               value={stats.rarestTrait}
               sub={`${stats.rarestCount} doctor${stats.rarestCount !== 1 ? 's' : ''}`}
+              color="amber"
             />
             <StatCard
-              emoji="🏆"
-              label="Most Relatable Doctor"
-              value={stats.mostRelatableDoctor}
-            />
-            <StatCard
-              emoji="👨‍⚕️"
+              icon={Users}
               label="Total Participants"
               value={`${stats.totalDoctors} doctor${stats.totalDoctors !== 1 ? 's' : ''}`}
+              color="sky"
             />
-          </div>
-        </section>
-      )}
+          </>
+        )}
+      </div>
 
-      <div className="space-y-3 pb-4">
+      {/* Footer */}
+      <div className="px-4 py-4 space-y-3 border-t border-gray-100">
         <Link
           href="/bingo"
-          className="block w-full text-center bg-white border border-gray-200 text-gray-700 font-medium py-3.5 rounded-2xl hover:bg-gray-50 transition-colors"
+          className="flex items-center justify-center gap-2 w-full bg-white border border-gray-200 text-gray-700 font-medium py-3.5 rounded-2xl hover:bg-gray-50 transition-colors"
         >
-          ← Edit my board
-        </Link>
-        <Link
-          href="/"
-          className="block text-center text-sm text-gray-400 hover:text-gray-600"
-        >
-          Back to home
+          <ArrowLeft size={16} />
+          Edit my board
         </Link>
       </div>
     </div>
