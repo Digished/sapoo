@@ -128,7 +128,7 @@ export default function BingoPage() {
                   <Pencil size={14} strokeWidth={2} />
                 </Link>
               </div>
-              <p className="text-xs text-gray-400 mt-0.5">Pick the traits that describe you</p>
+              <p className="text-xs text-gray-400 mt-0.5">Pick the 7 traits that best describe you</p>
             </div>
           </div>
           <div className="text-right">
