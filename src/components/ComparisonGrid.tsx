@@ -18,10 +18,14 @@ interface Props {
 export default function ComparisonGrid({ myTraits, theirTraits }: Props) {
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-4 text-xs text-gray-400 px-1">
+      <div className="flex items-center flex-wrap gap-x-4 gap-y-1.5 text-xs text-gray-400 px-1">
         <span className="flex items-center gap-1.5">
           <span className="w-3 h-3 rounded-sm bg-gradient-to-br from-green-400 to-violet-400 inline-block" />
           Both of you
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="w-3 h-3 rounded-sm bg-green-100 border border-green-200 inline-block" />
+          Only you
         </span>
         <span className="flex items-center gap-1.5">
           <span className="w-3 h-3 rounded-sm bg-indigo-100 border border-indigo-200 inline-block" />
@@ -38,6 +42,7 @@ export default function ComparisonGrid({ myTraits, theirTraits }: Props) {
           const mine   = myTraits.has(trait.key)
           const theirs = theirTraits.has(trait.key)
           const shared    = mine && theirs
+          const mineOnly  = mine && !theirs
           const theirOnly = !mine && theirs
           const Icon = trait.icon
 
@@ -48,12 +53,14 @@ export default function ComparisonGrid({ myTraits, theirTraits }: Props) {
                 'aspect-square rounded-2xl flex flex-col items-center justify-center text-center gap-1 p-1.5 select-none',
                 shared
                   ? sharedStyles[trait.color]
-                  : theirOnly
-                    ? 'bg-indigo-50 text-indigo-400 border border-indigo-100'
-                    : 'bg-gray-100 text-gray-300'
+                  : mineOnly
+                    ? 'bg-green-50 text-green-500 border border-green-100'
+                    : theirOnly
+                      ? 'bg-indigo-50 text-indigo-400 border border-indigo-100'
+                      : 'bg-gray-100 text-gray-300'
               )}
             >
-              <Icon size={18} strokeWidth={shared ? 2.5 : 1.8} />
+              <Icon size={18} strokeWidth={shared || mineOnly ? 2.5 : 1.8} />
               <span className="text-[9px] leading-tight font-medium w-full px-0.5">
                 {trait.label}
               </span>
