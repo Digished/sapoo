@@ -1,10 +1,21 @@
 import Link from 'next/link'
 import { Stethoscope, CheckSquare, Users, ArrowRight } from 'lucide-react'
+import BingoPreview from '@/components/BingoPreview'
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center flex-1 px-6 py-14">
-      <div className="w-full max-w-sm space-y-10">
+    <div className="flex flex-col items-center justify-center flex-1 px-6 py-14 relative overflow-hidden">
+
+      {/* Animated background grid */}
+      <div className="absolute inset-0 flex items-start justify-center pointer-events-none select-none" aria-hidden>
+        <div className="w-full max-w-sm px-6 pt-8 opacity-[0.13]">
+          <BingoPreview />
+        </div>
+        {/* Fade out toward bottom */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white" />
+      </div>
+
+      <div className="w-full max-w-sm space-y-10 relative z-10">
 
         {/* Hero */}
         <div className="text-center space-y-5 animate-fade-up">
