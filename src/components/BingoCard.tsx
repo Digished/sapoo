@@ -3,7 +3,7 @@
 import { Trait, TraitColor } from '@/types'
 import { cn } from '@/lib/utils'
 
-export const MAX_SELECTIONS = 7
+export const MAX_SELECTIONS = 10
 
 const selectedStyles: Record<TraitColor, string> = {
   green:  'bg-green-500  shadow-green-200  text-white',

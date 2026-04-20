@@ -11,7 +11,7 @@ import { TRAITS } from '@/lib/traits'
 import BingoGrid from '@/components/BingoGrid'
 import { cn } from '@/lib/utils'
 
-const MAX = 7
+const MAX = 10
 
 export default function BingoPage() {
   const router = useRouter()
@@ -128,7 +128,7 @@ export default function BingoPage() {
                   <Pencil size={14} strokeWidth={2} />
                 </Link>
               </div>
-              <p className="text-xs text-gray-400 mt-0.5">Pick the 7 traits that best describe you</p>
+              <p className="text-xs text-gray-400 mt-0.5">Pick the 10 traits that best describe you</p>
             </div>
           </div>
           <div className="text-right">
@@ -168,7 +168,7 @@ export default function BingoPage() {
         )}
         <button
           onClick={() => router.push('/results')}
-          disabled={count === 0}
+          disabled={!atMax}
           className="w-full bg-green-500 hover:bg-green-600 active:bg-green-700 disabled:bg-gray-200 disabled:text-gray-400 text-white font-semibold py-4 rounded-2xl transition-colors text-base shadow-md shadow-green-200 disabled:shadow-none"
         >
           See My Colleagues →
