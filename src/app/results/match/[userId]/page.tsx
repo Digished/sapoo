@@ -102,7 +102,7 @@ export default function MatchPage() {
           <Users size={18} strokeWidth={2} className="text-green-500" />
         </div>
         <p className="text-sm text-gray-600">
-          Green squares are traits you both chose. Tap back to see all your matches.
+          Coloured squares are traits you both chose. Tap back to see all your matches.
         </p>
       </div>
 
