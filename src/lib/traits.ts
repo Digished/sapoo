@@ -1,7 +1,7 @@
 import { Trait } from '@/types'
 import {
   Coffee, PawPrint, Moon, Sunrise, BatteryLow,
-  Smile, Brain, Timer, Pizza, Mic2,
+  Smile, Brain, Heart, Pizza, Mic2,
   Home, Users, MessageCircle, Meh, ShieldCheck,
   Code2, Smartphone, Laugh, Share2, Tv2,
   UtensilsCrossed, PartyPopper, Gamepad2, PhoneOff, Music2,
@@ -15,7 +15,7 @@ export const TRAITS: Trait[] = [
   { key: 'always_tired',        label: 'Always tired',              icon: BatteryLow,       color: 'sky'    },
   { key: 'chill_pressure',      label: 'Chill under pressure',      icon: Smile,            color: 'green'  },
   { key: 'overthinks',          label: 'Overthinks everything',     icon: Brain,            color: 'violet' },
-  { key: 'procrastinator',      label: 'Procrastination champion',  icon: Timer,            color: 'rose'   },
+  { key: 'big_hugger',          label: 'Big hugger',                icon: Heart,            color: 'rose'   },
   { key: 'junk_food',           label: 'Junk food lover',           icon: Pizza,            color: 'amber'  },
   { key: 'sings_shower',        label: 'Sings in the shower',       icon: Mic2,             color: 'sky'    },
   { key: 'introvert',           label: 'Introvert until comfortable', icon: Home,           color: 'green'  },
