@@ -163,7 +163,7 @@ export default function BingoPage() {
       <div className="px-4 pb-8 pt-4">
         {atMax && (
           <p className="text-center text-xs text-green-600 font-medium mb-3">
-            You picked {MAX} traits — ready to see your matches!
+            You picked {MAX} traits — ready to find your colleagues!
           </p>
         )}
         <button
@@ -171,7 +171,7 @@ export default function BingoPage() {
           disabled={count === 0}
           className="w-full bg-green-500 hover:bg-green-600 active:bg-green-700 disabled:bg-gray-200 disabled:text-gray-400 text-white font-semibold py-4 rounded-2xl transition-colors text-base shadow-md shadow-green-200 disabled:shadow-none"
         >
-          See My Matches →
+          See My Colleagues →
         </button>
       </div>
     </div>

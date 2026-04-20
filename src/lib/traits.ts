@@ -5,6 +5,9 @@ import {
   Home, Users, MessageCircle, Meh, ShieldCheck,
   Code2, Smartphone, Laugh, Share2, Tv2,
   UtensilsCrossed, PartyPopper, Gamepad2, PhoneOff, Music2,
+  Sparkles, Flame, Trophy, Dumbbell, Briefcase,
+  Car, Shirt, Crown, PenOff, BadgeCheck,
+  HandHeart, Radio, ChefHat, Clock, Headphones,
 } from 'lucide-react'
 
 export const TRAITS: Trait[] = [
@@ -33,6 +36,21 @@ export const TRAITS: Trait[] = [
   { key: 'video_games',         label: 'Video Games Please',        icon: Gamepad2,         color: 'rose'   },
   { key: 'dont_call_text',      label: "Don't call, just text",     icon: PhoneOff,         color: 'amber'  },
   { key: 'can_dance',           label: 'Can dance for Africa',      icon: Music2,           color: 'sky'    },
+  { key: 'life_of_party',       label: 'Life of the party',         icon: Sparkles,         color: 'green'  },
+  { key: 'naughty_by_nature',   label: 'Naughty by nature',         icon: Flame,            color: 'violet' },
+  { key: 'sports_maniac',       label: 'Sports maniac',             icon: Trophy,           color: 'rose'   },
+  { key: 'gym_rat',             label: 'Gym rat',                   icon: Dumbbell,         color: 'amber'  },
+  { key: 'always_serious',      label: 'Always serious',            icon: Briefcase,        color: 'sky'    },
+  { key: 'manic_driver',        label: 'Manic driver',              icon: Car,              color: 'green'  },
+  { key: 'fashionista',         label: 'Fashionista',               icon: Shirt,            color: 'violet' },
+  { key: 'born_leader',         label: 'Born leader',               icon: Crown,            color: 'rose'   },
+  { key: 'never_has_biro',      label: 'Never has a biro',          icon: PenOff,           color: 'amber'  },
+  { key: 'calls_chief',         label: "Calls everyone 'chief'",    icon: BadgeCheck,       color: 'sky'    },
+  { key: 'prayer_warrior',      label: 'Prayer warrior',            icon: HandHeart,        color: 'green'  },
+  { key: 'can_talk_africa',     label: 'Can talk for Africa',       icon: Radio,            color: 'violet' },
+  { key: 'top_chef',            label: 'Top Chef',                  icon: ChefHat,          color: 'rose'   },
+  { key: 'workaholic',          label: 'Workaholic',                icon: Clock,            color: 'amber'  },
+  { key: 'always_on_earphones', label: 'Always on earphones',       icon: Headphones,       color: 'sky'    },
 ]
 
 export const TRAIT_MAP = new Map(TRAITS.map(t => [t.key, t.label]))
