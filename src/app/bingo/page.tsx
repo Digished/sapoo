@@ -9,9 +9,11 @@ import { Pencil } from 'lucide-react'
 import { getSupabase } from '@/lib/supabase'
 import { TRAITS } from '@/lib/traits'
 import BingoGrid from '@/components/BingoGrid'
+import PeerView from '@/components/PeerView'
 import { cn } from '@/lib/utils'
 
-const MAX = 7
+const MAX = 10
+type BoardMode = 'mine' | 'peer'
 
 export default function BingoPage() {
   const router = useRouter()
@@ -20,6 +22,7 @@ export default function BingoPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [isSaving, setIsSaving] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [boardMode, setBoardMode] = useState<BoardMode>('mine')
 
   const lastSavedRef = useRef<Set<string>>(new Set())
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -116,64 +119,100 @@ export default function BingoPage() {
 
   return (
     <div className="flex flex-col flex-1">
+      {/* Header */}
       <div className="px-4 pt-5 pb-3">
         <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5">
-                <h1 className="font-bold text-gray-900 text-lg leading-tight truncate">
-                  {userName || 'Your board'}
-                </h1>
-                <Link href="/profile" className="shrink-0 text-gray-300 hover:text-gray-500 transition-colors">
-                  <Pencil size={14} strokeWidth={2} />
-                </Link>
-              </div>
-              <p className="text-xs text-gray-400 mt-0.5">Pick the 7 traits that best describe you</p>
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5">
+              <h1 className="font-bold text-gray-900 text-lg leading-tight truncate">
+                {userName || 'Your board'}
+              </h1>
+              <Link href="/profile" className="shrink-0 text-gray-300 hover:text-gray-500 transition-colors">
+                <Pencil size={14} strokeWidth={2} />
+              </Link>
             </div>
-          </div>
-          <div className="text-right">
-            <div className={cn(
-              'text-2xl font-bold tabular-nums leading-none',
-              atMax ? 'text-green-500' : 'text-gray-800'
-            )}>
-              {count}<span className="text-gray-300 text-base font-normal">/{MAX}</span>
-            </div>
-            <p className={cn(
-              'text-[10px] mt-0.5',
-              atMax ? 'text-green-500 font-medium' : 'text-gray-400'
-            )}>
-              {atMax ? 'Board full ✓' : isSaving ? 'Saving…' : 'selected'}
+            <p className="text-xs text-gray-400 mt-0.5">
+              {boardMode === 'mine' ? 'Pick the 10 traits that best describe you' : 'Traits your colleagues have rated you'}
             </p>
           </div>
+          {boardMode === 'mine' && (
+            <div className="text-right">
+              <div className={cn(
+                'text-2xl font-bold tabular-nums leading-none',
+                atMax ? 'text-green-500' : 'text-gray-800'
+              )}>
+                {count}<span className="text-gray-300 text-base font-normal">/{MAX}</span>
+              </div>
+              <p className={cn(
+                'text-[10px] mt-0.5',
+                atMax ? 'text-green-500 font-medium' : 'text-gray-400'
+              )}>
+                {atMax ? 'Board full ✓' : isSaving ? 'Saving…' : 'selected'}
+              </p>
+            </div>
+          )}
         </div>
 
-        <div className="w-full bg-gray-100 rounded-full h-1.5">
-          <div
+        {/* Mode toggle */}
+        <div className="flex bg-gray-100 rounded-2xl p-1 gap-1">
+          <button
+            onClick={() => setBoardMode('mine')}
             className={cn(
-              'h-1.5 rounded-full transition-all duration-300',
-              atMax ? 'bg-green-500' : 'bg-green-400'
+              'flex-1 py-2 rounded-xl text-sm font-semibold transition-all',
+              boardMode === 'mine' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-400'
             )}
-            style={{ width: `${(count / MAX) * 100}%` }}
-          />
+          >
+            My Board
+          </button>
+          <button
+            onClick={() => setBoardMode('peer')}
+            className={cn(
+              'flex-1 py-2 rounded-xl text-sm font-semibold transition-all',
+              boardMode === 'peer' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-400'
+            )}
+          >
+            Peer View
+          </button>
         </div>
-      </div>
 
-      <BingoGrid traits={TRAITS} selected={selected} onToggle={handleToggle} />
-
-      <div className="px-4 pb-8 pt-4">
-        {atMax && (
-          <p className="text-center text-xs text-green-600 font-medium mb-3">
-            You picked {MAX} traits — ready to see your matches!
-          </p>
+        {boardMode === 'mine' && (
+          <div className="mt-3 w-full bg-gray-100 rounded-full h-1.5">
+            <div
+              className={cn(
+                'h-1.5 rounded-full transition-all duration-300',
+                atMax ? 'bg-green-500' : 'bg-green-400'
+              )}
+              style={{ width: `${(count / MAX) * 100}%` }}
+            />
+          </div>
         )}
-        <button
-          onClick={() => router.push('/results')}
-          disabled={count === 0}
-          className="w-full bg-green-500 hover:bg-green-600 active:bg-green-700 disabled:bg-gray-200 disabled:text-gray-400 text-white font-semibold py-4 rounded-2xl transition-colors text-base shadow-md shadow-green-200 disabled:shadow-none"
-        >
-          See My Matches →
-        </button>
       </div>
+
+      {/* Board content */}
+      {boardMode === 'mine' ? (
+        <>
+          <BingoGrid traits={TRAITS} selected={selected} onToggle={handleToggle} />
+
+          <div className="px-4 pb-8 pt-4">
+            {atMax && (
+              <p className="text-center text-xs text-green-600 font-medium mb-3">
+                You picked {MAX} traits — ready to find your colleagues!
+              </p>
+            )}
+            <button
+              onClick={() => router.push('/results')}
+              disabled={!atMax}
+              className="w-full bg-green-500 hover:bg-green-600 active:bg-green-700 disabled:bg-gray-200 disabled:text-gray-400 text-white font-semibold py-4 rounded-2xl transition-colors text-base shadow-md shadow-green-200 disabled:shadow-none"
+            >
+              See My Colleagues →
+            </button>
+          </div>
+        </>
+      ) : (
+        <div className="flex-1 overflow-y-auto pb-8 pt-1">
+          {userId && <PeerView userId={userId} />}
+        </div>
+      )}
     </div>
   )
 }

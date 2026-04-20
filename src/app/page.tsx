@@ -38,7 +38,7 @@ export default function Home() {
         {/* Feature list */}
         <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden animate-fade-up-1">
           {[
-            { icon: CheckSquare, text: 'Pick 7 traits that describe you' },
+            { icon: CheckSquare, text: 'Pick 10 traits that describe you' },
             { icon: Users,       text: 'Find colleagues who match your vibe' },
           ].map(({ icon: Icon, text }, i) => (
             <div

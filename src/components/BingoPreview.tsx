@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { TRAITS } from '@/lib/traits'
 import { cn } from '@/lib/utils'
 
-const GRID_SIZE = 25
+const GRID_SIZE = 40
 const MAX_SELECTED = 6
 const TOGGLE_INTERVAL = 950
 

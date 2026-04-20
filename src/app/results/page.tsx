@@ -13,11 +13,11 @@ import DoctorMatch from '@/components/DoctorMatch'
 import StatCard from '@/components/StatCard'
 import { cn } from '@/lib/utils'
 
-type Tab = 'matches' | 'stats'
+type Tab = 'colleagues' | 'stats'
 
 export default function ResultsPage() {
   const router = useRouter()
-  const [tab, setTab] = useState<Tab>('matches')
+  const [tab, setTab] = useState<Tab>('colleagues')
   const [matches, setMatches] = useState<MatchResult[]>([])
   const [stats, setStats] = useState<GlobalStats | null>(null)
   const [userName, setUserName] = useState('')
@@ -70,7 +70,7 @@ export default function ResultsPage() {
           <div className="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center mx-auto">
             <Search size={22} className="text-green-400 animate-pulse" />
           </div>
-          <p className="text-gray-400 text-sm">Finding your matches…</p>
+          <p className="text-gray-400 text-sm">Finding your colleagues…</p>
         </div>
       </div>
     )
@@ -97,7 +97,7 @@ export default function ResultsPage() {
           {userName ? `${userName}'s Results` : 'Your Results'}
         </h1>
         <p className="text-gray-400 text-sm mt-0.5">
-          {tab === 'matches' ? 'Tap a match to see your shared traits' : 'How the hospital scored'}
+          {tab === 'colleagues' ? 'Tap a colleague to see your shared traits' : 'How the hospital scored'}
         </p>
       </div>
 
@@ -105,16 +105,16 @@ export default function ResultsPage() {
       <div className="px-4 mb-4">
         <div className="flex bg-gray-100 rounded-2xl p-1 gap-1">
           <button
-            onClick={() => setTab('matches')}
+            onClick={() => setTab('colleagues')}
             className={cn(
               'flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all',
-              tab === 'matches'
+              tab === 'colleagues'
                 ? 'bg-white text-gray-900 shadow-sm'
                 : 'text-gray-400 hover:text-gray-600'
             )}
           >
             <UserCheck size={15} strokeWidth={2} />
-            Matches
+            Colleagues
           </button>
           <button
             onClick={() => setTab('stats')}
@@ -133,14 +133,14 @@ export default function ResultsPage() {
 
       {/* Tab content */}
       <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-2">
-        {tab === 'matches' && (
+        {tab === 'colleagues' && (
           <>
             {matches.length === 0 ? (
               <div className="bg-white rounded-2xl p-8 text-center border border-gray-100 shadow-sm space-y-3">
                 <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center mx-auto">
                   <Trophy size={20} strokeWidth={2} className="text-green-400" />
                 </div>
-                <p className="text-gray-400 text-sm">No matches yet — you might be the first one here!</p>
+                <p className="text-gray-400 text-sm">No colleagues yet — you might be the first one here!</p>
               </div>
             ) : (
               matches.map((m, i) => (
