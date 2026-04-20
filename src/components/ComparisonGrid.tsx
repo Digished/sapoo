@@ -20,7 +20,7 @@ export default function ComparisonGrid({ myTraits, theirTraits }: Props) {
     <div className="space-y-3">
       <div className="flex items-center gap-4 text-xs text-gray-400 px-1">
         <span className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded-sm bg-violet-500 inline-block" />
+          <span className="w-3 h-3 rounded-sm bg-gradient-to-br from-green-400 to-violet-400 inline-block" />
           Both of you
         </span>
         <span className="flex items-center gap-1.5">
