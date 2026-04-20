@@ -6,6 +6,8 @@ import { TRAITS } from '@/lib/traits'
 import { TraitColor } from '@/types'
 import { cn } from '@/lib/utils'
 
+const MAX_RATINGS = 5
+
 const selectedStyles: Record<TraitColor, string> = {
   green:  'bg-green-500  text-white shadow-sm shadow-green-200',
   violet: 'bg-violet-500 text-white shadow-sm shadow-violet-200',
@@ -74,6 +76,7 @@ export default function RatingGrid({ raterId, ratedId }: Props) {
     setSelected(prev => {
       const next = new Set(prev)
       if (next.has(key)) next.delete(key)
+      else if (next.size >= MAX_RATINGS) return prev
       else next.add(key)
       if (debounceRef.current) clearTimeout(debounceRef.current)
       debounceRef.current = setTimeout(() => save(next), 500)
@@ -88,23 +91,25 @@ export default function RatingGrid({ raterId, ratedId }: Props) {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between px-1">
-        <p className="text-xs text-gray-400">Tap traits that describe them — saves automatically</p>
-        <p className={cn('text-xs font-medium', isSaving ? 'text-gray-400' : 'text-green-500')}>
-          {isSaving ? 'Saving…' : selected.size > 0 ? `${selected.size} rated` : ''}
+        <p className="text-xs text-gray-400">Pick up to 5 traits — saves automatically</p>
+        <p className={cn('text-xs font-medium tabular-nums', isSaving ? 'text-gray-400' : selected.size >= MAX_RATINGS ? 'text-green-500' : 'text-gray-400')}>
+          {isSaving ? 'Saving…' : `${selected.size}/${MAX_RATINGS}`}
         </p>
       </div>
 
       <div className="grid grid-cols-5 gap-1.5">
         {TRAITS.map(trait => {
           const isSelected = selected.has(trait.key)
+          const isDisabled = !isSelected && selected.size >= MAX_RATINGS
           const Icon = trait.icon
           return (
             <button
               key={trait.key}
               onClick={() => handleToggle(trait.key)}
+              disabled={isDisabled}
               className={cn(
                 'aspect-square rounded-2xl flex flex-col items-center justify-center text-center gap-1 p-1.5 select-none transition-all duration-200 active:scale-95',
-                isSelected ? selectedStyles[trait.color] : 'bg-gray-100 text-gray-500'
+                isSelected ? selectedStyles[trait.color] : isDisabled ? 'bg-gray-100 text-gray-200' : 'bg-gray-100 text-gray-500'
               )}
             >
               <Icon size={18} strokeWidth={isSelected ? 2.5 : 1.8} />
