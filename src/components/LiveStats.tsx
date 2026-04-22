@@ -84,25 +84,37 @@ export default function LiveStats() {
         byUser.get(r.user_id)!.add(r.trait_key)
       }
 
-      // Unique combinations (i < j ensures A&B and B&A are the same pair)
-      const userIds = Array.from(byUser.keys())
+      // Each user's best match, deduplicated as combinations
+      const seen = new Set<string>()
       const computed: Pair[] = []
-      for (let i = 0; i < userIds.length; i++) {
-        for (let j = i + 1; j < userIds.length; j++) {
-          const aId = userIds[i], bId = userIds[j]
-          const aSet = byUser.get(aId)!, bSet = byUser.get(bId)!
-          const shared = Array.from(aSet).filter(k => bSet.has(k))
+
+      for (const [userId, traitSet] of byUser.entries()) {
+        let bestPct = 0, bestId = '', bestShared: string[] = []
+
+        for (const [otherId, otherSet] of byUser.entries()) {
+          if (otherId === userId) continue
+          const shared = Array.from(traitSet).filter(k => otherSet.has(k))
           if (shared.length === 0) continue
-          const maxSize = Math.max(aSet.size, bSet.size)
+          const maxSize = Math.max(traitSet.size, otherSet.size)
           const pct = Math.round((shared.length / maxSize) * 100)
-          computed.push({
-            aName: userMap.get(aId) ?? '?',
-            bName: userMap.get(bId) ?? '?',
-            pct,
-            shared,
-          })
+          if (pct > bestPct || (pct === bestPct && shared.length > bestShared.length)) {
+            bestPct = pct; bestId = otherId; bestShared = shared
+          }
         }
+
+        if (!bestId) continue
+        // Canonical key so A&B and B&A are the same
+        const key = [userId, bestId].sort().join('|')
+        if (seen.has(key)) continue
+        seen.add(key)
+        computed.push({
+          aName: userMap.get(userId) ?? '?',
+          bName: userMap.get(bestId) ?? '?',
+          pct: bestPct,
+          shared: bestShared,
+        })
       }
+
       computed.sort((a, b) => b.pct - a.pct || b.shared.length - a.shared.length)
       setPairs(computed)
 
