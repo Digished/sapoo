@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Trophy, BarChart3, ChevronDown, ChevronUp } from 'lucide-react'
+import { Trophy, BarChart3 } from 'lucide-react'
 import { getSupabase } from '@/lib/supabase'
 import { TRAITS } from '@/lib/traits'
 import { TraitColor } from '@/types'
@@ -10,9 +10,9 @@ import { cn } from '@/lib/utils'
 interface RawResponse { user_id: string; trait_key: string }
 interface RawUser    { id: string; name: string }
 
-interface Pair {
-  aName: string
-  bName: string
+interface ColleagueBest {
+  userName: string
+  bestMatchName: string
   pct: number
   shared: string[]
 }
@@ -50,13 +50,10 @@ const colorBadge: Record<TraitColor, string> = {
   sky:    'bg-sky-100 text-sky-700',
 }
 
-const NAMES_PREVIEW = 5
-
 export default function LiveStats() {
-  const [topPairs, setTopPairs]     = useState<Pair[]>([])
-  const [traitStats, setTraitStats] = useState<TraitStat[]>([])
-  const [isLoading, setIsLoading]   = useState(true)
-  const [expandedTrait, setExpandedTrait] = useState<string | null>(null)
+  const [colleagueBests, setColleagueBests] = useState<ColleagueBest[]>([])
+  const [traitStats, setTraitStats]         = useState<TraitStat[]>([])
+  const [isLoading, setIsLoading]           = useState(true)
 
   useEffect(() => {
     async function load() {
@@ -71,36 +68,47 @@ export default function LiveStats() {
 
       const userMap = new Map(allUsers.map(u => [u.id, u.name]))
 
-      // Group by user
+      // Group responses by user
       const byUser = new Map<string, Set<string>>()
       for (const r of allResponses) {
         if (!byUser.has(r.user_id)) byUser.set(r.user_id, new Set())
         byUser.get(r.user_id)!.add(r.trait_key)
       }
 
-      // All pairs
-      const userIds = Array.from(byUser.keys())
-      const pairs: Pair[] = []
-      for (let i = 0; i < userIds.length; i++) {
-        for (let j = i + 1; j < userIds.length; j++) {
-          const aId = userIds[i], bId = userIds[j]
-          const aSet = byUser.get(aId)!, bSet = byUser.get(bId)!
-          const shared = Array.from(aSet).filter(k => bSet.has(k))
-          const maxSize = Math.max(aSet.size, bSet.size)
-          if (maxSize === 0 || shared.length === 0) continue
+      // For each colleague, find their single best match
+      const bests: ColleagueBest[] = []
+      for (const [userId, traitSet] of byUser.entries()) {
+        let bestPct = 0
+        let bestMatchName = ''
+        let bestShared: string[] = []
+
+        for (const [otherId, otherSet] of byUser.entries()) {
+          if (otherId === userId) continue
+          const shared = Array.from(traitSet).filter(k => otherSet.has(k))
+          const maxSize = Math.max(traitSet.size, otherSet.size)
+          if (maxSize === 0) continue
           const pct = Math.round((shared.length / maxSize) * 100)
-          pairs.push({
-            aName: userMap.get(aId) ?? '?',
-            bName: userMap.get(bId) ?? '?',
-            pct,
-            shared,
+          if (pct > bestPct || (pct === bestPct && shared.length > bestShared.length)) {
+            bestPct = pct
+            bestMatchName = userMap.get(otherId) ?? '?'
+            bestShared = shared
+          }
+        }
+
+        if (bestPct > 0) {
+          bests.push({
+            userName: userMap.get(userId) ?? '?',
+            bestMatchName,
+            pct: bestPct,
+            shared: bestShared,
           })
         }
       }
-      pairs.sort((a, b) => b.pct - a.pct || b.shared.length - a.shared.length)
-      setTopPairs(pairs.slice(0, 5))
 
-      // Trait stats
+      bests.sort((a, b) => b.pct - a.pct || b.shared.length - a.shared.length)
+      setColleagueBests(bests)
+
+      // Trait stats — all names always shown
       const byTrait = new Map<string, string[]>()
       for (const r of allResponses) {
         if (!byTrait.has(r.trait_key)) byTrait.set(r.trait_key, [])
@@ -123,34 +131,35 @@ export default function LiveStats() {
     load()
   }, [])
 
-  if (isLoading || (topPairs.length === 0 && traitStats.length === 0)) return null
+  if (isLoading || (colleagueBests.length === 0 && traitStats.length === 0)) return null
 
   return (
     <div className="w-full max-w-sm mx-auto space-y-5 pb-10">
 
-      {/* Top Pairs */}
-      {topPairs.length > 0 && (
+      {/* Colleague best pairs */}
+      {colleagueBests.length > 0 && (
         <div className="space-y-2">
           <div className="flex items-center gap-2 px-1">
             <Trophy size={14} className="text-amber-500" strokeWidth={2.2} />
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Top Colleague Pairs</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Colleague Pairs</p>
           </div>
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            {topPairs.map((pair, i) => (
-              <div key={`${pair.aName}-${pair.bName}`} className={cn('px-4 py-3', i > 0 && 'border-t border-gray-50')}>
+            {colleagueBests.map((entry, i) => (
+              <div key={`${entry.userName}-${i}`} className={cn('px-4 py-3', i > 0 && 'border-t border-gray-50')}>
                 <div className="flex items-center justify-between mb-1">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-xs font-bold text-gray-300 shrink-0">#{i + 1}</span>
+                  <div className="min-w-0 flex-1">
                     <p className="text-sm font-semibold text-gray-900 truncate">
-                      {pair.aName} &amp; {pair.bName}
+                      {entry.userName}
+                      <span className="text-gray-400 font-normal"> · best match </span>
+                      {entry.bestMatchName}
                     </p>
                   </div>
-                  <span className="shrink-0 ml-2 text-sm font-bold text-green-600 tabular-nums">
-                    {pair.pct}%
+                  <span className="shrink-0 ml-3 text-sm font-bold text-green-600 tabular-nums">
+                    {entry.pct}%
                   </span>
                 </div>
-                <p className="text-xs text-gray-400 leading-relaxed pl-5 truncate">
-                  {pair.shared
+                <p className="text-xs text-gray-400 leading-relaxed truncate">
+                  {entry.shared
                     .map(k => TRAITS.find(t => t.key === k)?.label ?? k)
                     .join(' · ')}
                 </p>
@@ -160,7 +169,7 @@ export default function LiveStats() {
         </div>
       )}
 
-      {/* Trait Breakdown */}
+      {/* Trait breakdown — all names always visible */}
       {traitStats.length > 0 && (
         <div className="space-y-2">
           <div className="flex items-center gap-2 px-1">
@@ -170,44 +179,27 @@ export default function LiveStats() {
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
             {traitStats.map((stat, i) => {
               const Icon = stat.icon
-              const isExpanded = expandedTrait === stat.key
-              const preview = stat.names.slice(0, NAMES_PREVIEW)
-              const extra   = stat.names.length - NAMES_PREVIEW
-
               return (
-                <div key={stat.key} className={cn(i > 0 && 'border-t border-gray-50')}>
-                  <button
-                    onClick={() => setExpandedTrait(prev => prev === stat.key ? null : stat.key)}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors"
-                  >
+                <div key={stat.key} className={cn('px-4 py-3', i > 0 && 'border-t border-gray-50')}>
+                  <div className="flex items-center gap-3 mb-1.5">
                     <div className={cn('w-7 h-7 rounded-lg flex items-center justify-center shrink-0', colorBg[stat.color])}>
                       <Icon size={13} strokeWidth={2.2} className={colorText[stat.color]} />
                     </div>
-                    <span className="flex-1 text-sm font-medium text-gray-800 truncate">{stat.label}</span>
+                    <span className="flex-1 text-sm font-medium text-gray-800">{stat.label}</span>
                     <span className={cn('text-[11px] font-semibold px-2 py-0.5 rounded-full shrink-0', colorBadge[stat.color])}>
                       {stat.count}
                     </span>
-                    {isExpanded
-                      ? <ChevronUp size={14} className="text-gray-300 shrink-0" />
-                      : <ChevronDown size={14} className="text-gray-300 shrink-0" />}
-                  </button>
-
-                  {isExpanded && (
-                    <div className="px-4 pb-3 pl-14">
-                      <p className="text-xs text-gray-500 leading-relaxed">
-                        {preview.join(', ')}
-                        {extra > 0 && (
-                          <span className="text-gray-400"> +{extra} more</span>
-                        )}
-                      </p>
-                    </div>
-                  )}
+                  </div>
+                  <p className="text-xs text-gray-500 leading-relaxed pl-10">
+                    {stat.names.join(', ')}
+                  </p>
                 </div>
               )
             })}
           </div>
         </div>
       )}
+
     </div>
   )
 }
