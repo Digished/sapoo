@@ -150,13 +150,10 @@ export default function LiveStats() {
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-semibold text-gray-900 truncate">
                       {entry.userName}
-                      <span className="text-gray-400 font-normal"> · best match </span>
+                      <span className="text-gray-400 font-normal"> &amp; </span>
                       {entry.bestMatchName}
                     </p>
                   </div>
-                  <span className="shrink-0 ml-3 text-sm font-bold text-green-600 tabular-nums">
-                    {entry.pct}%
-                  </span>
                 </div>
                 <p className="text-xs text-gray-400 leading-relaxed truncate">
                   {entry.shared
