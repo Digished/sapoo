@@ -1,17 +1,17 @@
 import Link from 'next/link'
 import { Stethoscope, CheckSquare, Users, ArrowRight } from 'lucide-react'
 import BingoPreview from '@/components/BingoPreview'
+import LiveStats from '@/components/LiveStats'
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center flex-1 px-6 py-14 relative overflow-hidden">
+    <div className="flex flex-col items-center flex-1 px-6 py-14 relative overflow-hidden">
 
       {/* Animated background grid */}
       <div className="absolute inset-0 flex items-start justify-center pointer-events-none select-none" aria-hidden>
         <div className="w-full max-w-sm px-6 pt-8 opacity-[0.13]">
           <BingoPreview />
         </div>
-        {/* Fade out toward bottom */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white" />
       </div>
 
@@ -71,6 +71,12 @@ export default function Home() {
         </div>
 
       </div>
+
+      {/* Live leaderboard — loads after CTAs, outside the z-10 hero container */}
+      <div className="w-full relative z-10 mt-10">
+        <LiveStats />
+      </div>
+
     </div>
   )
 }
